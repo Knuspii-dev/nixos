@@ -1,37 +1,48 @@
 { config, pkgs, ... }:
 
 {
-  imports = [];
+  imports = [ ];
 
-  # Disable X11, Enable Wayland
-  services.xserver.enable = false;
-  services.wayland.enable = true;
+  system.stateVersion = "23.11";
+  networking.hostName = "framework";
 
-  # Hyprland stuff
-  services.hyprland.enable = true;
+  time.timeZone = "Europe/Berlin";
+  i18n.defaultLocale = "en_US.UTF-8";
 
-  # System packages
+  users.users.knuspii = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" "video" ];
+    shell = pkgs.bash;
+  };
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  services.xserver.enable = true;
+  services.xserver.displayManager.sddm.enable = true;
+  services.xserver.desktopManager.plasma5.enable = false; # nicht GNOME oder Plasma
+
+  programs.git.enable = true;
+
+  hardware.opengl.enable = true;
+  services.hardware.opengl.driSupport = true;
+  services.hardware.opengl.driSupport32Bit = true;
+
+  services.printing.enable = true;
+  networking.networkmanager.enable = true;
+
   environment.systemPackages = with pkgs; [
-    hyprland
-    waybar
-    mako
-    swww
+    vim
+    wget
+    curl
+    git
     kitty
     firefox
-    neofetch
     htop
     btop
+    neofetch
     tree
-    openssh
     nmap
   ];
 
-  # User config
-  users.users.knuspii = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
-    shell = pkgs.bashInteractive;
-  };
-
-  system.stateVersion = "23.11";
+  system.autoUpgrade.enable = false;
 }
